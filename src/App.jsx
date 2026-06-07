@@ -4,6 +4,7 @@ import Dashboard from "./components/Dashboard";
 import Workspace from "./components/Workspace";
 import MiniGameContainer from "./components/MiniGameContainer";
 import { audioSynth } from "./utils/audioSynth";
+import { lessons } from "./data/lessons";
 
 export default function App() {
   const [view, setView] = useState("dashboard"); // dashboard | workspace | minigame
