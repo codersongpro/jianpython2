@@ -1,0 +1,466 @@
+@import url('https://fonts.googleapis.com/css2?family=Dongle:wght@400;700&family=Nunito:wght@400;600;800;900&family=Gowun+Dodum&display=swap');
+
+:root {
+  --color-bg-dark: #0b0c1b;
+  --color-panel-bg: rgba(26, 27, 65, 0.65);
+  --color-panel-border: rgba(255, 255, 255, 0.15);
+  --color-neon-cyan: #00f0ff;
+  --color-neon-pink: #ff007f;
+  --color-neon-purple: #bd00ff;
+  --color-star-yellow: #ffd700;
+  --color-text-light: #f3f4f6;
+  --color-text-dim: #9ca3af;
+  
+  --font-title: 'Dongle', 'Nunito', 'Gowun Dodum', sans-serif;
+  --font-ui: 'Nunito', 'Gowun Dodum', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-ui);
+}
+
+body {
+  background-color: var(--color-bg-dark);
+  color: var(--color-text-light);
+  overflow-x: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Rounded and cute font sizing */
+h1, h2, h3 {
+  font-family: var(--font-title);
+  letter-spacing: 1px;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(10, 11, 27, 0.5);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-panel-border);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-neon-cyan);
+}
+
+/* Glassmorphism Panel */
+.glass-panel {
+  background: var(--color-panel-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid var(--color-panel-border);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.glass-panel:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Neon Glows */
+.neon-cyan-glow {
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+  border-color: rgba(0, 240, 255, 0.4);
+}
+
+.neon-pink-glow {
+  box-shadow: 0 0 15px rgba(255, 0, 127, 0.2);
+  border-color: rgba(255, 0, 127, 0.4);
+}
+
+.neon-text-cyan {
+  text-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
+  color: var(--color-neon-cyan);
+}
+
+.neon-text-pink {
+  text-shadow: 0 0 8px rgba(255, 0, 127, 0.6);
+  color: var(--color-neon-pink);
+}
+
+/* Floating Animation */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Planet Hover Spin */
+@keyframes slow-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: slow-spin 25s linear infinite;
+}
+
+/* Pulse Animation for buttons/goals */
+@keyframes pulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 240, 255, 0.4); }
+  70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(0, 240, 255, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 240, 255, 0); }
+}
+
+.animate-pulse-cyan {
+  animation: pulse 2s infinite;
+}
+
+/* Cheerful Comic Buttons */
+.btn-cosmic {
+  font-family: var(--font-ui);
+  font-weight: 800;
+  font-size: 1.1rem;
+  padding: 10px 24px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.btn-cyan {
+  background: linear-gradient(135deg, #00c6ff, #0072ff);
+  color: white;
+}
+.btn-cyan:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
+}
+.btn-cyan:active {
+  transform: translateY(1px);
+}
+
+.btn-pink {
+  background: linear-gradient(135deg, #f953c6, #b91d73);
+  color: white;
+}
+.btn-pink:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 0 20px rgba(255, 0, 127, 0.6);
+}
+.btn-pink:active {
+  transform: translateY(1px);
+}
+
+.btn-star {
+  background: linear-gradient(135deg, #ffe000, #799f0c);
+  color: #111;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+.btn-star:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.8);
+}
+
+.btn-outline {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid var(--color-panel-border);
+  color: white;
+}
+.btn-outline:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: white;
+  transform: translateY(-2px);
+}
+
+/* Quick insertion keys styling */
+.magic-key-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--color-panel-border);
+  color: var(--color-neon-cyan);
+  padding: 6px 14px;
+  border-radius: 12px;
+  font-family: monospace;
+  font-weight: bold;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.magic-key-btn:hover {
+  background: rgba(0, 240, 255, 0.15);
+  border-color: var(--color-neon-cyan);
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* Keyboard typing game meteor effect */
+@keyframes shake {
+  0% { transform: translate(1px, 1px) rotate(0deg); }
+  10% { transform: translate(-1px, -2px) rotate(-1deg); }
+  20% { transform: translate(-3px, 0px) rotate(1deg); }
+  30% { transform: translate(0px, 2px) rotate(0deg); }
+  40% { transform: translate(1px, -1px) rotate(1deg); }
+  50% { transform: translate(-1px, 2px) rotate(-1deg); }
+  60% { transform: translate(-3px, 1px) rotate(0deg); }
+  70% { transform: translate(2px, 1px) rotate(-1deg); }
+  80% { transform: translate(-1px, -1px) rotate(1deg); }
+  90% { transform: translate(2px, 2px) rotate(0deg); }
+  100% { transform: translate(1px, -2px) rotate(-1deg); }
+}
+
+.shake-animation {
+  animation: shake 0.5s infinite;
+}
+
+/* Visual sandbox icons */
+.sandbox-weather-icon {
+  font-size: 5rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+/* --- MINI GAME DYNAMIC STYLES --- */
+
+/* Balloon Wobble & Bounce */
+@keyframes balloon-wobble {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  25% { transform: translate(-50%, -50%) rotate(3deg) translateX(3px); }
+  50% { transform: translate(-50%, -50%) rotate(0deg); }
+  75% { transform: translate(-50%, -50%) rotate(-3deg) translateX(-3px); }
+  100% { transform: translate(-50%, -50%) rotate(0deg); }
+}
+
+.balloon-wobble {
+  animation: balloon-wobble 4s ease-in-out infinite;
+}
+
+@keyframes balloon-error-bounce {
+  0% { transform: translate(-50%, -50%) scale(1) rotate(0deg); filter: drop-shadow(0 0 20px #ff007f); }
+  15% { transform: translate(-50%, -50%) scale(1.15) rotate(8deg); }
+  30% { transform: translate(-50%, -50%) scale(0.9) rotate(-8deg); }
+  45% { transform: translate(-50%, -50%) scale(1.05) rotate(4deg); }
+  60% { transform: translate(-50%, -50%) scale(0.95) rotate(-4deg); }
+  100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+}
+
+.balloon-error {
+  animation: balloon-error-bounce 0.6s ease-in-out;
+}
+
+/* Balloon Particle Pop Effect */
+@keyframes particle-pop-out {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+  100% { transform: translate(var(--p-tx), var(--p-ty)) scale(1.2); opacity: 0; }
+}
+
+.pop-particle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: particle-pop-out 0.6s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+  z-index: 99;
+}
+
+/* Defense Base Recoil & Laser Runway */
+@keyframes base-recoil-anim {
+  0% { transform: translateY(-50%) translateX(0px); }
+  15% { transform: translateY(-50%) translateX(-15px) scaleX(0.9); }
+  100% { transform: translateY(-50%) translateX(0px) scaleX(1); }
+}
+
+.defense-base-recoil {
+  animation: base-recoil-anim 0.4s cubic-bezier(0.15, 0.85, 0.3, 1);
+}
+
+.defense-runway {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: repeating-linear-gradient(90deg, rgba(0, 240, 255, 0.15), rgba(0, 240, 255, 0.15) 20px, transparent 20px, transparent 40px);
+  z-index: 1;
+}
+
+/* Defense Projectile */
+@keyframes projectile-fly-anim {
+  0% { left: 80px; opacity: 1; transform: translateY(-50%) scale(0.6); }
+  100% { left: var(--target-x); opacity: 1; transform: translateY(-50%) scale(1.1); }
+}
+
+.defense-projectile {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.8rem;
+  z-index: 5;
+  filter: drop-shadow(0 0 10px var(--color-neon-cyan));
+  animation: projectile-fly-anim var(--fly-duration) cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Defense Blast */
+@keyframes blast-grow {
+  0% { transform: translate(-50%, -50%) scale(0.2); opacity: 1; filter: brightness(2); }
+  50% { opacity: 0.9; }
+  100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; filter: brightness(1); }
+}
+
+.defense-blast {
+  position: absolute;
+  top: 50%;
+  left: var(--blast-x);
+  transform: translate(-50%, -50%);
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff, #ffd700, #ff007f, transparent);
+  box-shadow: 0 0 30px #ff007f;
+  z-index: 6;
+  animation: blast-grow 0.5s ease-out forwards;
+}
+
+/* Rhythm Beat Combo & Sparks */
+@keyframes combo-popup {
+  0% { transform: scale(0.3) translateY(20px) rotate(-8deg); opacity: 0; filter: brightness(2); }
+  35% { transform: scale(1.5) translateY(-15px) rotate(4deg); opacity: 1; filter: brightness(1.2); }
+  70% { transform: scale(1) translateY(-25px) rotate(0deg); opacity: 1; }
+  100% { transform: scale(0.8) translateY(-50px); opacity: 0; }
+}
+
+.combo-text {
+  position: absolute;
+  left: 16.6%;
+  top: 15%;
+  transform: translateX(-50%);
+  font-size: 2.2rem;
+  font-weight: 900;
+  font-family: var(--font-title);
+  color: var(--color-star-yellow);
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.8), 0 0 20px #ff007f;
+  animation: combo-popup 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  pointer-events: none;
+  z-index: 10;
+}
+
+@keyframes judgment-pulse {
+  0% { transform: translate(-50%, -50%) scale(0.8); opacity: 1; border-color: #00f0ff; box-shadow: 0 0 20px #00f0ff; }
+  100% { transform: translate(-50%, -50%) scale(1.6); opacity: 0; border-color: #bd00ff; box-shadow: 0 0 40px #bd00ff; }
+}
+
+.judgment-hit-pulse {
+  position: absolute;
+  left: 16.6%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 4px solid #00f0ff;
+  pointer-events: none;
+  z-index: 4;
+  animation: judgment-pulse 0.4s ease-out forwards;
+}
+
+/* API Connect Laser Wave */
+@keyframes api-laser-flow {
+  0% { background-position: 0% 50%; opacity: 0.9; transform: translateY(-50%) scaleY(1); }
+  20% { transform: translateY(-52%) scaleY(1.3) skewX(-4deg); }
+  40% { transform: translateY(-48%) scaleY(0.8) skewX(4deg); }
+  60% { transform: translateY(-51%) scaleY(1.2) skewX(-2deg); }
+  80% { transform: translateY(-49%) scaleY(0.9) skewX(2deg); }
+  100% { background-position: 100% 50%; opacity: 0.9; transform: translateY(-50%) scaleY(1); }
+}
+
+.api-laser-line {
+  position: absolute;
+  left: 80px;
+  right: 80px;
+  height: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: linear-gradient(90deg, #00f0ff, #bd00ff, #ff007f, #00f0ff);
+  background-size: 300% 300%;
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.8), 0 0 35px rgba(255, 0, 127, 0.5);
+  border-radius: 6px;
+  z-index: 2;
+  animation: api-laser-flow 1.2s linear infinite;
+}
+
+/* Hologram Status Monitor with Scanlines */
+@keyframes hologram-glow {
+  0% { box-shadow: 0 0 15px rgba(0, 240, 255, 0.2); }
+  50% { box-shadow: 0 0 30px rgba(0, 240, 255, 0.5); }
+  100% { box-shadow: 0 0 15px rgba(0, 240, 255, 0.2); }
+}
+
+.hologram-screen {
+  position: relative;
+  background: rgba(5, 12, 35, 0.9);
+  border: 2px solid var(--color-neon-cyan);
+  border-radius: 16px;
+  overflow: hidden;
+  animation: hologram-glow 2.5s infinite;
+}
+
+.hologram-screen::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 240, 255, 0.12) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.04));
+  background-size: 100% 4px, 6px 100%;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Confetti Shower Celebration */
+@keyframes confetti-fall {
+  0% { transform: translateY(-50px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(600px) rotate(720deg); opacity: 0; }
+}
+
+.confetti-piece {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  pointer-events: none;
+  z-index: 999;
+  animation: confetti-fall var(--fall-duration) linear forwards;
+}
+
+/* --- MINI GAME ADVANCED FX --- */
+
+/* 풍선 마우스 호버 시 둥실 커지는 효과 */
+.balloon-wobble {
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.2s ease;
+}
+
+.balloon-wobble:hover {
+  transform: translate(-50%, -50%) scale(1.18) !important;
+  filter: brightness(1.12) drop-shadow(0 0 15px rgba(255, 255, 255, 0.3));
+}
+
+/* API 연결 번개 스파크 파티클 */
+@keyframes spark-jump {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  50% { opacity: 0.9; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
+}
+
+.neon-spark-particle {
+  pointer-events: none;
+  z-index: 5;
+}
