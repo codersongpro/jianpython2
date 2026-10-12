@@ -1,55 +1,69 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import StarfieldBackground from "./components/StarfieldBackground";
 import Dashboard from "./components/Dashboard";
 import Workspace from "./components/Workspace";
 import MiniGameContainer from "./components/MiniGameContainer";
 import { audioSynth } from "./utils/audioSynth";
-import { lessons } from "./data/lessons";
+import { getLesson, lessons } from "./data/lessons";
+
+const STORAGE_KEY = "jian_progress_v2";
+const EMPTY_PROGRESS = { currentLesson: 1, completedLessons: [], badges: [] };
+
+// 완료한 레슨 바로 다음까지는 항상 열려 있도록 맞춰 줍니다.
+function normalize(progress) {
+  const lastDone = Math.max(0, ...progress.completedLessons);
+  return { ...progress, currentLesson: Math.max(progress.currentLesson, lastDone + 1) };
+}
+
+// 진도 불러오기 (예전 버전의 저장 키도 이어받습니다)
+function loadProgress() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) return normalize({ ...EMPTY_PROGRESS, ...JSON.parse(saved) });
+
+    const legacyCurrent = localStorage.getItem("jian_current_lesson");
+    if (legacyCurrent) {
+      return normalize({
+        currentLesson: parseInt(legacyCurrent, 10) || 1,
+        completedLessons: JSON.parse(localStorage.getItem("jian_completed_lessons") || "[]"),
+        badges: JSON.parse(localStorage.getItem("jian_badges") || "[]"),
+      });
+    }
+  } catch (err) {
+    console.error("저장된 진도를 불러오지 못했어요:", err);
+  }
+  return EMPTY_PROGRESS;
+}
+
+function loadMuted() {
+  try {
+    return localStorage.getItem("jian_mute") === "true";
+  } catch {
+    return false;
+  }
+}
 
 export default function App() {
   const [view, setView] = useState("dashboard"); // dashboard | workspace | minigame
   const [selectedLessonId, setSelectedLessonId] = useState(null);
+  const [progress, setProgress] = useState(loadProgress);
+  const [isMuted, setIsMuted] = useState(() => audioSynth.setMuteState(loadMuted()));
 
-  // Persistence States (Local Storage)
-  const [currentLesson, setCurrentLesson] = useState(1);
-  const [completedLessons, setCompletedLessons] = useState([]);
-  const [totalStars, setTotalStars] = useState(0);
-  const [badges, setBadges] = useState([]);
-  const [isMuted, setIsMuted] = useState(false);
-
-  // Load progress on mount
   useEffect(() => {
     try {
-      const savedCurrent = localStorage.getItem("jian_current_lesson");
-      const savedCompleted = localStorage.getItem("jian_completed_lessons");
-      const savedStars = localStorage.getItem("jian_stars");
-      const savedBadges = localStorage.getItem("jian_badges");
-      const savedMute = localStorage.getItem("jian_mute");
-
-      if (savedCurrent) setCurrentLesson(parseInt(savedCurrent, 10));
-      if (savedCompleted) setCompletedLessons(JSON.parse(savedCompleted));
-      if (savedStars) setTotalStars(parseInt(savedStars, 10));
-      if (savedBadges) setBadges(JSON.parse(savedBadges));
-      if (savedMute) {
-        const muteVal = savedMute === "true";
-        setIsMuted(muteVal);
-        audioSynth.setMuteState(muteVal);
-      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
     } catch (err) {
-      console.error("로컬 저장소 로딩 에러:", err);
+      console.error("진도를 저장하지 못했어요:", err);
     }
-  }, []);
+  }, [progress]);
 
-  // Save progress changes
-  const saveProgress = (updatedCurrent, updatedCompleted, updatedStars, updatedBadges) => {
-    try {
-      localStorage.setItem("jian_current_lesson", updatedCurrent.toString());
-      localStorage.setItem("jian_completed_lessons", JSON.stringify(updatedCompleted));
-      localStorage.setItem("jian_stars", updatedStars.toString());
-      localStorage.setItem("jian_badges", JSON.stringify(updatedBadges));
-    } catch (err) {
-      console.error("로컬 저장소 저장 에러:", err);
-    }
+  const { currentLesson, completedLessons, badges } = progress;
+  // 별 연료 = 완료한 레슨 수
+  const totalStars = completedLessons.filter((id) => getLesson(id)).length;
+
+  const goDashboard = () => {
+    setView("dashboard");
+    setSelectedLessonId(null);
   };
 
   const handleStartLesson = (lessonId) => {
@@ -57,86 +71,43 @@ export default function App() {
     setView("workspace");
   };
 
+  // 코드 임무 + 퀴즈를 모두 마치면 호출됩니다. 다음 레슨은 여기서 열립니다.
   const handleCompleteLesson = (lessonId) => {
-    const isNewCompletion = !completedLessons.includes(lessonId);
-    let nextCompleted = [...completedLessons];
-    let nextStars = totalStars;
+    const lesson = getLesson(lessonId);
+    setProgress((prev) => ({
+      currentLesson: lessonId === prev.currentLesson ? Math.min(prev.currentLesson + 1, lessons.length + 1) : prev.currentLesson,
+      completedLessons: prev.completedLessons.includes(lessonId) ? prev.completedLessons : [...prev.completedLessons, lessonId],
+      // 미니게임이 없는 레슨은 완료와 동시에 배지를 줍니다.
+      badges: !lesson?.miniGame && !prev.badges.includes(lessonId) ? [...prev.badges, lessonId] : prev.badges,
+    }));
 
-    if (isNewCompletion) {
-      nextCompleted.push(lessonId);
-      nextStars += 1;
-      setCompletedLessons(nextCompleted);
-      setTotalStars(nextStars);
-    }
-
-    // 이론 전용 레슨(isTheoryOnly: true)인 경우 미니게임을 건너뛰고 바로 완료 배지를 지급한 뒤 대시보드로 이동합니다.
-    const lesson = lessons.find((l) => l.id === lessonId);
-    if (lesson && lesson.isTheoryOnly) {
-      let nextBadges = [...badges];
-      let nextCurrent = currentLesson;
-
-      if (!nextBadges.includes(lessonId)) {
-        nextBadges.push(lessonId);
-        setBadges(nextBadges);
-      }
-
-      if (lessonId === currentLesson) {
-        nextCurrent = currentLesson + 1;
-        setCurrentLesson(nextCurrent);
-      }
-
-      saveProgress(nextCurrent, nextCompleted, nextStars, nextBadges);
-      setView("dashboard");
-      setSelectedLessonId(null);
-    } else {
-      saveProgress(currentLesson, nextCompleted, nextStars, badges);
-      setView("minigame"); // 미니게임이 있는 경우 게임 화면으로 이동
-    }
+    if (lesson?.miniGame) setView("minigame");
+    else goDashboard();
   };
 
   const handleCloseGame = (earnedBadge) => {
-    let nextBadges = [...badges];
-    let nextCurrent = currentLesson;
-
     if (earnedBadge && selectedLessonId) {
-      // Award badge if not already unlocked
-      if (!nextBadges.includes(selectedLessonId)) {
-        nextBadges.push(selectedLessonId);
-        setBadges(nextBadges);
-      }
-
-      // If they finished the highest unlocked lesson, unlock the next one!
-      if (selectedLessonId === currentLesson) {
-        nextCurrent = currentLesson + 1;
-        setCurrentLesson(nextCurrent);
-      }
+      setProgress((prev) => (prev.badges.includes(selectedLessonId) ? prev : { ...prev, badges: [...prev.badges, selectedLessonId] }));
     }
-
-    saveProgress(nextCurrent, completedLessons, totalStars, nextBadges);
-    setView("dashboard");
-    setSelectedLessonId(null);
+    goDashboard();
   };
 
-  const handleResetProgress = () => {
-    setCurrentLesson(1);
-    setCompletedLessons([]);
-    setTotalStars(0);
-    setBadges([]);
-    saveProgress(1, [], 0, []);
-  };
+  const handleResetProgress = () => setProgress(EMPTY_PROGRESS);
 
   const handleToggleMute = () => {
-    const nextMute = audioSynth.toggleMute();
-    setIsMuted(nextMute);
-    localStorage.setItem("jian_mute", nextMute.toString());
+    const next = audioSynth.toggleMute();
+    setIsMuted(next);
+    try {
+      localStorage.setItem("jian_mute", String(next));
+    } catch {
+      /* 무시 */
+    }
   };
 
   return (
     <>
-      {/* Background stars */}
       <StarfieldBackground />
 
-      {/* Main Views Routing */}
       {view === "dashboard" && (
         <Dashboard
           currentLesson={currentLesson}
@@ -152,23 +123,19 @@ export default function App() {
 
       {view === "workspace" && (
         <Workspace
+          key={selectedLessonId}
           lessonId={selectedLessonId}
-          completedLessons={completedLessons}
+          maxUnlockedLesson={Math.min(currentLesson, lessons.length)}
+          isCompleted={completedLessons.includes(selectedLessonId)}
           onBack={() => {
             audioSynth.playBeep(440, 0.08);
-            setView("dashboard");
-            setSelectedLessonId(null);
+            goDashboard();
           }}
           onCompleteLesson={handleCompleteLesson}
         />
       )}
 
-      {view === "minigame" && (
-        <MiniGameContainer
-          lessonId={selectedLessonId}
-          onClose={handleCloseGame}
-        />
-      )}
+      {view === "minigame" && <MiniGameContainer key={selectedLessonId} lessonId={selectedLessonId} onClose={handleCloseGame} />}
     </>
   );
 }

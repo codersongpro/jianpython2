@@ -1,16 +1,69 @@
-# React + Vite
+# 지안이의 우주 파이썬 탐험대 🚀
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+유튜브 강의 **「달려라 파이썬」 1~34강**을 보면서 브라우저에서 바로 파이썬을 실습하는 초등학생용 학습 앱입니다.
+설치 없이 브라우저에서 파이썬(Pyodide)이 실행되고, 레슨마다 영상 → 코딩 임무 → 개념 퀴즈 → 복습 미니게임 순서로 진행합니다.
 
-Currently, two official plugins are available:
+## 실행 방법
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm install
+npm run dev       # 개발 서버
+npm run build     # 배포용 빌드 (dist/)
+npm run lint      # 코드 검사
+npm run verify    # 커리큘럼 자동 검증 (모범 답안 채점, 퀴즈·게임 정답 확인)
+```
 
-## React Compiler
+> 파이썬 엔진은 실행 시 `cdn.jsdelivr.net`에서 내려받습니다. 처음 코딩 레슨을 열 때 인터넷 연결이 필요합니다.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 학습 흐름
 
-## Expanding the ESLint configuration
+1. **스토리 + 오늘의 목표** 확인
+2. **강의 영상** 시청 (모든 레슨에서 앱 안에서 재생, 안 될 때는 유튜브에서 열기 링크 제공)
+3. **코딩 임무** 수행 → 실행 결과로 자동 채점, 틀리면 무엇이 부족한지 안내
+4. **개념 퀴즈 2문항**을 모두 맞히면 레슨 완료 → ⭐ 별 연료 +1, 다음 레슨 열림
+5. **복습 미니게임**(선택)을 클리어하면 배지 획득 — 게임에 실패해도 진도는 막히지 않습니다
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+학습 지원 기능
+- 레슨마다 **핵심 정리**, **힌트**, **스크래치 블록 비교**, 통과 후 **도전 과제**
+- 3번 이상 막히면 **모범 답안** 보기
+- 에러 메시지를 줄 번호와 함께 어린이용 설명으로 번역
+- 코드 창: Tab = 들여쓰기 4칸, Shift+Tab = 내어쓰기, Enter 자동 들여쓰기, Ctrl+Enter = 실행
+- 무한 루프는 자동으로 멈추고, 실행할 때마다 변수는 새로 시작
+- `input()`은 브라우저 입력 창으로 받기
+
+## 커리큘럼 (7단원 · 34강)
+
+| 단원 | 강 | 내용 | 진행 방식 |
+|---|---|---|---|
+| 1. 출발 준비 | 1~5 | 프로그래밍 언어, 프로그래밍 과정, 파이썬 소개, 설치, IDLE | 영상 + 퀴즈 |
+| | 6 | IDLE (2) · 첫 주문 `print()` | 코딩 실습 |
+| 2. 변수와 자료형 | 7~12 | 변수, 자료형·`type()`, `input()`, int·float, 문자열 `+`·`*`, 인덱스 | 코딩 실습 |
+| 3. 참과 거짓 | 13~14 | 비교 연산, `and`·`or`·`not` | 코딩 실습 |
+| 4. 리스트와 딕셔너리 | 15~21 | 리스트 생성·인덱스·수정, `append`·`len`, 딕셔너리 (16·19·21강 연습문제 실습) | 코딩 실습 |
+| 5. 조건문 | 22~24 | `if`, `else`, `elif` (24강 메달 판정 연습) | 코딩 실습 |
+| 6. 반복문 | 25~30 | `while`, `break`, 카운트다운, `for`·`range`, 리스트 순회, 구구단 | 코딩 실습 |
+| 7. 함수 | 31~34 | `def`, 매개변수, 지역·전역변수, `return` | 코딩 실습 |
+
+## 폴더 구조
+
+```
+src/
+  data/lessons.js         커리큘럼 데이터 (단원, 레슨, 채점 함수, 퀴즈, 미니게임, 퀵키)
+  components/
+    Dashboard.jsx         단원별 로드맵, 진도, 배지, 용어 사전
+    Workspace.jsx         레슨 화면 (영상, 임무, 코드 창, 결과 창, 퀴즈)
+    MiniGameContainer.jsx 복습 미니게임 (풍선, 디펜스, 리듬)
+  utils/pyodideRunner.js  브라우저 파이썬 실행 엔진 (무한 루프 방지, 에러 번역)
+  utils/audioSynth.js     효과음
+scripts/verify-curriculum.mjs  커리큘럼 자동 검증
+```
+
+### 레슨 추가·수정하기
+
+`src/data/lessons.js`의 레슨 객체를 고친 뒤 `npm run verify`를 실행하세요.
+검증 스크립트가 모범 답안(`solution`)이 채점(`check`)을 통과하는지, 시작 코드만으로는 통과되지 않는지, 퀴즈 정답이 보기에 있는지, 리듬게임 O/X가 실제 파이썬 결과와 같은지를 확인합니다.
+
+## 보호자 메뉴
+
+대시보드 오른쪽 아래 **학습 기록 초기화**의 비밀번호는 `1234`입니다. (`src/components/Dashboard.jsx`의 `RESET_PASSWORD`에서 바꿀 수 있어요.)
+진도는 브라우저(localStorage)에 저장되므로, 다른 브라우저나 기기에서는 처음부터 시작합니다.

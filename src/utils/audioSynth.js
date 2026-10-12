@@ -1,9 +1,16 @@
 let isMuted = false;
 
+// 브라우저는 AudioContext 개수를 제한하므로 하나만 만들어 계속 재사용합니다.
+let sharedContext = null;
+
 function getAudioContext() {
-  const AudioContext = window.AudioContext || window.webkitAudioContext;
-  if (!AudioContext) return null;
-  return new AudioContext();
+  if (!sharedContext) {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return null;
+    sharedContext = new AudioContext();
+  }
+  if (sharedContext.state === "suspended") sharedContext.resume();
+  return sharedContext;
 }
 
 export const audioSynth = {
